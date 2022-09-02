@@ -1,8 +1,5 @@
 import { galleryItems } from "./gallery-items.js";
 // Change code below this line
-import * as basicLightbox from "../node_modules/basiclightbox/src/scripts/main.js";
-
-// console.log(galleryItems);
 
 const gallery = document.querySelector(".gallery");
 const markup = galleryItems.reduce((acc, item) => {
@@ -21,20 +18,25 @@ const markup = galleryItems.reduce((acc, item) => {
   );
 }, "");
 
-gallery.insertAdjacentHTML("beforeend", markup);
+gallery.innerHTML = markup;
 
 gallery.addEventListener("click", onClickImg);
+
 function onClickImg(e) {
-  if (!e.target.classList.contains("js-gallery-item")) {
+  e.preventDefault();
+  if (!e.target.classList.contains("gallery__image")) {
     return;
   }
-  const urlImg = e.target.getAttribute("src");
-
+  const urlImg = e.target.dataset.source;
   const instance = basicLightbox.create(`
-    <img src=${urlImg} width="800" height="600">
+    <img src=${urlImg} width="800" height="600">     
 `);
-
   instance.show();
-}
 
-// e.preventDefault();
+  document.addEventListener("keydown", onKeyDown);
+  function onKeyDown(e) {
+    if (e.code === "Escape") {
+      instance.close();
+    }
+  }
+}
